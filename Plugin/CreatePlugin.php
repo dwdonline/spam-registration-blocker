@@ -5,11 +5,14 @@ namespace SamSteele\SpamBlocker\Plugin;
 class CreatePlugin
 {
     protected $_creationTimer;
+    protected $_configHelper;
 
     public function __construct(
-        \SamSteele\SpamBlocker\Api\CreationTimerInterface $creationTimer
+        \SamSteele\SpamBlocker\Api\CreationTimerInterface $creationTimer,
+        \SamSteele\SpamBlocker\Helper\Config $configHelper
     ) {
         $this->_creationTimer = $creationTimer;
+        $this->_configHelper = $configHelper;
     }
 
     /**
@@ -19,7 +22,9 @@ class CreatePlugin
      */
     public function afterExecute(\Magento\Customer\Controller\Account\Create $subject, $result)
     {
-        $this->_creationTimer->setStartTime();
+        if ($this->_configHelper->isRegistrationTimerEnabled()) {
+            $this->_creationTimer->setStartTime();
+        }
 
         return $result;
     }

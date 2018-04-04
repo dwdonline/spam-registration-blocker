@@ -18,9 +18,5 @@ interface CreationTimerInterface
      * @return integer
      */
     public function getAccountCreationTime();
-
-    /**
-     * @return boolean
-     */
-    public function validateAccountCreationTime();
+    
 }

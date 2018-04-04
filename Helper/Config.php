@@ -38,7 +38,7 @@ class Config extends AbstractHelper
      */
     public function isRegistrationTimerEnabled()
     {
-        return $this->_scopeConfig->getValue('spamblocker/registration_timer/enable_registration_timer');
+        return $this->isSpamBlockerEnabled() && $this->_scopeConfig->getValue('spamblocker/registration_timer/enable_registration_timer');
     }
 
     /**
@@ -55,7 +55,7 @@ class Config extends AbstractHelper
     public function isHoneyPotEnabled($action)
     {
         // Config keys match action names - eg, customer_account_create
-        return $this->_scopeConfig->getValue('spamblocker/honeypot_field/' . $action);
+        return $this->isSpamBlockerEnabled() && $this->_scopeConfig->getValue('spamblocker/honeypot_field/' . $action);
     }
 
     /**

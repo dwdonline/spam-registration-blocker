@@ -4,24 +4,12 @@ namespace SamSteele\SpamBlocker\Plugin;
 
 class AccountManagementPlugin
 {
-    protected $_helper;
-    protected $_creationTimer;
-    protected $_messageManager;
-    protected $_request;
-    protected $_logger;
+    protected $_spamBlocker;
 
     public function __construct(
-        \SamSteele\SpamBlocker\Helper\Config $helper,
-        \SamSteele\SpamBlocker\Api\CreationTimerInterface $creationTimer,
-        \Magento\Framework\Message\ManagerInterface $messageManager,
-        \Magento\Framework\App\Request\Http $request,
-        \Psr\Log\LoggerInterface $logger
+        \SamSteele\SpamBlocker\Api\SpamBlockerInterface $spamBlocker
     ) {
-        $this->_helper = $helper;
-        $this->_creationTimer = $creationTimer;
-        $this->_messageManager = $messageManager;
-        $this->_request = $request;
-        $this->_logger = $logger;
+        $this->_spamBlocker = $spamBlocker;
     }
 
     /**
@@ -39,35 +27,12 @@ class AccountManagementPlugin
         $password = null,
         $redirectUrl = ''
     ) {
-        $this->_creationTimer->setEndTime();
-
-        if ($this->_helper->isSpamBlockerEnabled()) {
-
-            // Block if account created too quickly
-            if (!$this->_creationTimer->validateAccountCreationTime()) {
-                $this->blockRegistration();
-            }
-
-            // Block if honeypot field is filled out
-            if ($this->_request->getParam($this->_helper->getHoneyPotFieldName())) {
-                $this->blockRegistration();
-            }
+    
+        if (!$this->_spamBlocker->validate()) {
+            $this->_spamBlocker->blockRegistration();
         }
 
-        // Continue with registration as normal
         return $proceed($customer, $password, $redirectUrl);
     }
 
-    /**
-     * @return null
-     */
-    protected function blockRegistration()
-    {
-        $this->_logger->info(implode(', ', (array_slice($this->_request->getParams(), 3, 6))));
-
-        // Return to homepage with error message
-        $this->_messageManager->addError($this->_helper->getBlockMessage());
-        header('Location: ' . '/');
-        exit();
-    }
 }

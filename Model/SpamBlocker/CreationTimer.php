@@ -1,10 +1,11 @@
 <?php
 
-namespace SamSteele\SpamBlocker\Model;
+namespace SamSteele\SpamBlocker\Model\SpamBlocker;
 
+use \Magento\Framework\Model\AbstractModel;
 use SamSteele\SpamBlocker\Api\CreationTimerInterface;
 
-class CreationTimer extends \Magento\Framework\Model\AbstractModel implements CreationTimerInterface
+class CreationTimer extends AbstractModel implements CreationTimerInterface
 {
     protected $_helper;
     protected $_dateTime;
@@ -31,7 +32,6 @@ class CreationTimer extends \Magento\Framework\Model\AbstractModel implements Cr
      */
     public function setStartTime()
     {
-        // Called after account create form is hit
         $this->_customerSession->setRegistrationStartTime($this->_dateTime->timestamp());
     }
 
@@ -40,7 +40,6 @@ class CreationTimer extends \Magento\Framework\Model\AbstractModel implements Cr
      */
     public function setEndTime()
     {
-        // Called before account creation is executed
         $this->_customerSession->setRegistrationEndTime($this->_dateTime->timestamp());
     }
 
@@ -49,24 +48,12 @@ class CreationTimer extends \Magento\Framework\Model\AbstractModel implements Cr
      */
     public function getAccountCreationTime()
     {
+
+        // @TODO: Throw exception if values not set
+
         $registrationStartTime = $this->_customerSession->getRegistrationStartTime();
         $registrationEndTime = $this->_customerSession->getRegistrationEndTime();
 
         return $registrationEndTime - $registrationStartTime;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function validateAccountCreationTime()
-    {
-        if ($this->_helper->isRegistrationTimerEnabled()) {
-
-            $minRegistrationTime = $this->_helper->getMinRegistrationTime();
-            return $this->getAccountCreationTime() > $minRegistrationTime;
-
-        }
-
-        return true;
     }
 }

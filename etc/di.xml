@@ -2,7 +2,9 @@
 
 <config>
 
-    <preference for="SamSteele\SpamBlocker\Api\CreationTimerInterface" type="SamSteele\SpamBlocker\Model\CreationTimer" />
+    <preference for="SamSteele\SpamBlocker\Api\SpamBlockerInterface" type="SamSteele\SpamBlocker\Model\SpamBlocker" />
+    <preference for="SamSteele\SpamBlocker\Api\CreationTimerInterface" type="SamSteele\SpamBlocker\Model\SpamBlocker\CreationTimer" />
+    <preference for="SamSteele\SpamBlocker\Api\HoneypotInterface" type="SamSteele\SpamBlocker\Model\SpamBlocker\Honeypot" />
 
     <type name="Magento\Customer\Controller\Account\Create">
         <plugin name="spamBlockerRegistrationForm" type="\SamSteele\SpamBlocker\Plugin\CreatePlugin" sortOrder="1" disabled="false" />
@@ -20,7 +22,7 @@
         </arguments>
     </virtualType>
 
-    <type name="SamSteele\SpamBlocker\Plugin\AccountManagementPlugin">
+    <type name="SamSteele\SpamBlocker\Model\SpamBlocker">
         <arguments>
             <argument name="logger" xsi:type="object">customLogger</argument>
         </arguments>
